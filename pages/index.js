@@ -6,18 +6,31 @@ export default function Home() {
   Howler.volume(0.5);
   const cw = new Howl({
     src: ["/audio/coma-white-dv.mp3"],
+    sprite: {
+      intro: [0, 12000],
+      distorted: [48000, 12000],
+      outro: [84200, 12000],
+      full: [0, 95000],
+    },
   });
-  const toggleCW = () => {
-    console.log("here");
-    if (cw.playing()) {
-      cw.pause();
-    } else {
-      cw.play();
+
+  let id = undefined;
+  let spritePlaying = undefined;
+  const toggleCW = (sprite) => {
+    console.log(id, sprite);
+    if (id !== undefined) {
+      if (sprite === spritePlaying) {
+        cw.pause(id);
+        spritePlaying = undefined;
+        return;
+      } else {
+        cw.stop(id);
+      }
     }
+    id = cw.play(sprite);
+    spritePlaying = sprite;
   };
 
-  // Shoot the laser!
-  // sound.play("laser");
   return (
     <div className={styles.container}>
       <Head>
@@ -28,15 +41,19 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>WebAmp</h1>
-        <p className={styles.description}>Choose a song to play:</p>
-        <p>
-          <button onClick={toggleCW}>Coma White</button>
-          <button>Lateralus</button>
+        <p className={styles.description}>
+          Click on a button to play the song section (press the same button
+          again to stop)
         </p>
-
-        <div>
-          <p>This is a placeholder!</p>
-        </div>
+        <h3>Coma White</h3>
+        <p>
+          <button onClick={() => toggleCW("intro")}>Intro</button>
+          <button onClick={() => toggleCW("distorted")}>Heavy</button>
+          <button onClick={() => toggleCW("outro")}>Outro</button>
+        </p>
+        <p>
+          <button onClick={() => toggleCW("full")}>Full song</button>
+        </p>
       </main>
 
       <footer className={styles.footer}>Powered by Aliens!</footer>
